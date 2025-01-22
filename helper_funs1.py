@@ -28,6 +28,16 @@ def profit_of_kth_station_at_time_t(lambda_sell, lambda_purchase, energy):
     return profit
 
 def calculate_energy_n(lambda_max, lambda_sell_t, S):
+    """_summary_
+
+    Args:
+        lambda_max (_type_): _description_
+        lambda_sell_t (_type_): _description_
+        S (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     energy_n = np.divide((lambda_max - lambda_sell_t),S)
     return energy_n
 
