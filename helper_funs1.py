@@ -42,13 +42,16 @@ def calculate_energy_n(lambda_max, lambda_sell_t, S):
     return energy_n
 
 def calculate_base_sensitivity(lambda_max, lambda_b, battery_capacity):
-    S_b = np.divide((lambda_max-lambda_b)/battery_capacity)
+    S_b = np.divide((lambda_max-lambda_b),battery_capacity)
     return S_b
 
 def calculate_alpha(lambda_sell, lambda_b, lambda_max):
+    
     val = np.divide((lambda_sell-lambda_b),(lambda_max-lambda_b))
-    n = np.shape[0]
-    alpha = np.max(np.min(np.ones(n)-val,np.ones(n)),np.zeros(n))
+    n = np.shape(val)[0]
+    temp = np.minimum((np.ones((n,1))-val),np.ones((n,1)))
+    # print(np.shape(temp))
+    alpha = np.maximum(temp,np.zeros((n,1)))
     return alpha
 
 def calculate_behavioural_response(alpha, type_="high"):
