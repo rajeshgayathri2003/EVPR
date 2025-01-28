@@ -5,6 +5,7 @@ from helper_funs1 import energy_requirement_of_customers, profit_of_kth_station_
 import numpy as np
 from datetime import datetime
 import argparse
+from plots import plot_gridpurchase_sell
 
 if __name__ == "__main__":
     
@@ -36,6 +37,7 @@ if __name__ == "__main__":
     delta_lambda = 10
     
     lambda_max = np.ones((n,1))
+    #add comments
     lambda_b =  np.ones((n,1))
     lambda_sell = np.ones((n,1))
     lambda_purchase = np.ones((n,1))*grid_price
@@ -43,6 +45,7 @@ if __name__ == "__main__":
     final_soc = np.ones((n,1))
     Cn = np.ones((n,1))
     
+    cs_sell_price_variation = [cs_sell_price*np.ones((n,1))]
     profit_prev = 0 
     
     demand_final = np.zeros((n,1))
@@ -63,7 +66,7 @@ if __name__ == "__main__":
             lambda_max[i,:] = 2000
             
             #Assuming optimal user behaviour we set En,t = En,t*
-            lambda_b[i,:] = 1500
+            lambda_b[i,:] = 1800
             
             #Assume EV battery capacity of 40KW
             Cn[i,:] = 40
@@ -72,6 +75,9 @@ if __name__ == "__main__":
             
             final_soc[i,:]=0.9
             
+        count+=1
+        cs_sell_price_variation.append(lambda_sell)
+            
         S_b = calculate_base_sensitivity(lambda_max, lambda_b, Cn)
                
         alpha = calculate_alpha(lambda_sell, lambda_b, lambda_max)
@@ -79,6 +85,8 @@ if __name__ == "__main__":
         B_n_t = calculate_behavioural_response(alpha, type_="medium")
  
         S_n_t = np.divide(S_b,(final_soc-initial_soc)*B_n_t)
+        
+        print(S_n_t)
         
         E_n_t = calculate_energy_n(lambda_max, lambda_sell, S_n_t)
         
@@ -97,11 +105,21 @@ if __name__ == "__main__":
         
         profit_prev = profit
         
-        count+=1
+        
         # if count>=5:
         #     break
         
+    
+    cs_sell_price_variation = np.array(cs_sell_price_variation)
+    print(np.shape(cs_sell_price_variation))
+    #print(cs_sell_price_variation, lambda_purchase)
+    cs_purchase_price_variation = np.repeat(lambda_purchase[np.newaxis,:,:], count+1, axis=0)
+    print(np.shape(cs_purchase_price_variation))
+    
+        
     print(cs_sell_price/100)
     print(count)
+    
+    plot_gridpurchase_sell(cs_sell_price_variation, cs_purchase_price_variation, n, count)
         
         
