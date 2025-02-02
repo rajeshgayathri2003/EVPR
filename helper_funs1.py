@@ -61,3 +61,18 @@ def calculate_behavioural_response(alpha, type_="high"):
         return alpha
     if type_ == "low":
         return np.log(alpha*(np.e-1)+1)
+    
+def calculate_utility(S, E_n_t, lambda_max, lambda_sell):
+    """_summary_
+
+    Args:
+        S (_type_): _description_
+        E_n_t (_type_): _description_
+        lambda_max (_type_): _description_
+        lambda_sell (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    omega = -0.5*S*np.square(E_n_t) + (lambda_max-lambda_sell)*E_n_t
+    return omega
