@@ -50,6 +50,7 @@ def plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_var
     plt.title('Variation of Selling Price to EVs and Purchase from the grid for CS', fontsize=10)
     
     plt.legend()
+    plt.grid()
     #plt.show()
     
 def plot_price_demand(cs_sell_price_variation, demand_variation):
@@ -65,6 +66,7 @@ def plot_price_demand(cs_sell_price_variation, demand_variation):
     plt.xlabel('EV charging price offered by the CS')
     plt.ylabel('Demand of EV')
     plt.title('Variation of demand with the Electic Vehicle charging price', fontsize = 10)
+    plt.grid()
     
     plt.legend()
     #plt.show()
@@ -76,15 +78,22 @@ def plot_nash_equilibrium(profit_variation, omega_variation, demand_variation):
     #time_steps = np.arange(count)
     
     omega_plot = omega_variation[:,0,0]
-    demand_plot = demand_variation[:,0,0]
+    demand_plot = (demand_variation[:,0,0])
+    print("shape is", (demand_plot))
+    demand_plot = np.flip(demand_variation[:,0,0])
+    print("shape is", (demand_plot))
+    print("shape is", np.shape(profit_variation))
+    print(profit_variation)
     
-    plt.plot(demand_plot, profit_variation, label = "Profit to the charging station", color = 'b')
-    plt.plot(demand_plot, omega_plot, label = "Utility of EV", color = 'r', linestyle = '--')
+    plt.gca().invert_xaxis()
     
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
+    plt.plot(demand_plot, np.flip(profit_variation), label = "Profit to the charging station", color = 'b')
+    plt.plot(demand_plot, np.flip(omega_plot), label = "Utility of EV", color = 'r', linestyle = '--')
+    
+    plt.xlabel('Demand in kWh')
+    plt.ylabel('Profit')
     plt.title('Nash Equilibrium', fontsize=10)
-    
+    plt.grid()
     plt.legend()
     
 def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_variation):
@@ -99,8 +108,61 @@ def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_var
     plt.plot(price_plot, profit_variation, label = "Profit to the charging station", color = 'b')
     plt.plot(price_plot, omega_plot, label = "Utility of EV", color = 'r', linestyle = '--')
     
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
+    plt.xlabel('Selling Price of Electricity to EVs')
+    plt.ylabel('Profit')
     plt.title('Nash Equilibrium', fontsize=10)
-    
+    plt.grid()
     plt.legend()
+    
+    
+# def combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation):
+#     plt.figure(6)
+    
+#     omega_plot = omega_variation[:,0,0]
+#     price_plot = cs_sell_price_variation[1:,0,0]
+#     demand_plot = demand_variation[:,0,0]
+    
+#     plt.plot(price_plot, demand_plot, label = "Demand of Charging station", linestyle = '-.', color = 'g')
+#     plt.plot(price_plot, profit_variation, label = "Profit to the charging station", color = 'b')
+#     plt.plot(price_plot, omega_plot, label = "Utility of EV", color = 'r', linestyle = '--')
+    
+#     plt.xlabel('Selling Price of Electricity to EVs')
+#     plt.ylabel('Profit/ Demand')
+#     plt.title('Nash Equilibrium', fontsize=10)
+#     plt.grid()
+#     plt.legend()
+    
+
+def combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation):
+    fig, ax1 = plt.subplots()
+
+    # Extract relevant data
+    omega_plot = omega_variation[:,0,0]
+    price_plot = cs_sell_price_variation[1:,0,0]
+    demand_plot = demand_variation[:,0,0]
+
+    # Primary y-axis (Profit & Utility)
+    ax1.plot(price_plot, profit_variation, label="Profit to the Charging Station", color='b')
+    ax1.plot(price_plot, omega_plot, label="Utility of EV", color='r', linestyle='--')
+    
+    ax1.set_xlabel("Selling Price of Electricity to EVs")
+    ax1.set_ylabel("Profit / Utility", color='b')
+    ax1.tick_params(axis='y', labelcolor='b')
+    
+    # Secondary y-axis (Demand)
+    ax2 = ax1.twinx()
+    ax2.plot(price_plot, demand_plot, label="Demand of Charging Station", linestyle='-.', color='g')
+    
+    ax2.set_ylabel("Demand", color='g')
+    ax2.tick_params(axis='y', labelcolor='g')
+
+    # Title, legend, and grid
+    fig.suptitle("Nash Equilibrium", fontsize=10)
+    ax1.grid()
+    
+    # Combine legends
+    lines_1, labels_1 = ax1.get_legend_handles_labels()
+    lines_2, labels_2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc="best")
+
+    

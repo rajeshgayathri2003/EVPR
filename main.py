@@ -5,7 +5,7 @@ from helper_funs1 import energy_requirement_of_customers, profit_of_kth_station_
 import numpy as np
 from datetime import datetime
 import argparse
-from plots import plot_gridpurchase_sell_n, plot_gridpurchase_sell_single, plot_price_demand, plot_nash_equilibrium, plot_nash_equilibrium_2
+from plots import plot_gridpurchase_sell_n, plot_gridpurchase_sell_single, plot_price_demand, plot_nash_equilibrium, plot_nash_equilibrium_2, combined_plot_price
 import copy
 import matplotlib.pyplot as plt
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     count = 0
     state = 0
     
-    while state<20:
+    while True:
         
         #increase the price by 10 paise
         cs_sell_price+=delta_lambda
@@ -123,6 +123,7 @@ if __name__ == "__main__":
         if profit < profit_prev:
             demand_final = E_n_t
             cs_sell_price-=delta_lambda
+            break
             state+=1
         
         profit_prev = profit
@@ -145,7 +146,9 @@ if __name__ == "__main__":
     #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
     plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_variation, count)
     plot_price_demand(cs_sell_price_variation, demand_variation)
+    plot_nash_equilibrium(profit_variation, omega_variation, demand_variation)
     plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_variation)
+    combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation)
     plt.show()
     
         
