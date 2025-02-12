@@ -27,17 +27,17 @@ if __name__ == "__main__":
     #Note: all the grid_prices are given in paise
     
     if (6<=current_hour and current_hour<9) or (18<=current_hour and current_hour<22):
-        grid_price = cs_sell_price = 900
+        grid_price = cs_sell_price = 9
     
     elif (9<=current_hour and current_hour<16):
-        grid_price = cs_sell_price = 600
+        grid_price = cs_sell_price = 6
         
     else:
-        grid_price = cs_sell_price = 750
+        grid_price = cs_sell_price = 7.5
         
     #Change in price is denoted by delta_lambda
     #Let us assume that initially we sell at the same price as the grid
-    delta_lambda = 10
+    delta_lambda = 0.10
     
     #lambda_max is the maximum price at which the user exits the charging station
     lambda_max = np.ones((n,1))
@@ -77,10 +77,10 @@ if __name__ == "__main__":
         for i in range(n):
             lambda_sell[i,:] = cs_sell_price
             
-            lambda_max[i,:] = 2000
+            lambda_max[i,:] = 20
             
             #Assuming optimal user behaviour we set En,t = En,t*
-            lambda_b[i,:] = 900
+            lambda_b[i,:] = 9
             
             #Assume EV battery capacity of 40KW
             Cn[i,:] = 40
@@ -117,7 +117,7 @@ if __name__ == "__main__":
         profit_append = copy.deepcopy(profit)
         profit_variation.append(profit_append)
        
-        print("The profit is", profit/100)
+        print("The profit is", profit)
         
         
         if profit < profit_prev:
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     cs_purchase_price_variation = np.repeat(lambda_purchase[np.newaxis,:,:], count+1, axis=0)
     print(np.shape(cs_purchase_price_variation))
     
-    print(cs_sell_price/100)
+    print(cs_sell_price)
     print(count)
     
     #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
