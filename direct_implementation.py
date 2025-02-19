@@ -14,16 +14,16 @@ from csv_plots import write_to_csv
 
 if __name__ == "__main__":
     
-    #Add the number of vehicles and the number of charging stations
-    parser = argparse.ArgumentParser(description="Add the number of vehicels and the number of charging stations")
-    parser.add_argument("--vehicles", type=int, default=6, help="Enter the total number of vehicles we are taking into account for the given system")
-    parser.add_argument("--stations", type=int, default=2, help="Enter the total number of charging stations in the network")
+        #Add the number of vehicles and the number of charging stations
+        parser = argparse.ArgumentParser(description="Add the number of vehicels and the number of charging stations")
+        parser.add_argument("--vehicles", type=int, default=6, help="Enter the total number of vehicles we are taking into account for the given system")
+        parser.add_argument("--stations", type=int, default=2, help="Enter the total number of charging stations in the network")
+        
+        args = parser.parse_args()
+        n = args.vehicles
+        k = args.stations
+        
     
-    args = parser.parse_args()
-    n = args.vehicles
-    k = args.stations
-    
-    for i in range(24):
         current_hour = datetime.now().hour
         print("The current hour is", current_hour)
         
@@ -155,14 +155,14 @@ if __name__ == "__main__":
         
         data = [cs_sell_price, grid_price]
         write_to_csv("sell_purchase_2.csv", data)
-    #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
+        #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
     
-    # plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_variation, count)
-    # plot_price_demand_n(cs_sell_price_variation, demand_variation, n)
-    # combined_plot_price_n(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, n)
-    # plot_price_omega_n(cs_sell_price_variation, omega_variation, n)
-    # plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation, n)
-    # plt.show()
+        plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_variation, count)
+        plot_price_demand_n(cs_sell_price_variation, demand_variation, n)
+        combined_plot_price_n(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, n)
+        plot_price_omega_n(cs_sell_price_variation, omega_variation, n)
+        plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation, n)
+        plt.show()
     
     
     #plot_price_demand(cs_sell_price_variation, demand_variation)
