@@ -66,10 +66,10 @@ def plot_time_average_hourly_cost_per_charging_session(data):
     
         
 if __name__ == "__main__":
-    prices = read_from_csv("sell_purchase_2.csv")
+    prices = read_from_csv("sell_purchase_1.csv")
     plot_time_selling_purchse_price(prices)
     
-    cost_charging_session = read_from_csv("average_amount.csv")
+    cost_charging_session = read_from_csv("average_amount_1.csv")
     plot_time_average_hourly_cost_per_charging_session(cost_charging_session)
     
     plt.show()

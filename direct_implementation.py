@@ -15,60 +15,60 @@ from csv_plots import write_to_csv
 if __name__ == "__main__":
     
         #Add the number of vehicles and the number of charging stations
-        parser = argparse.ArgumentParser(description="Add the number of vehicels and the number of charging stations")
-        parser.add_argument("--vehicles", type=int, default=6, help="Enter the total number of vehicles we are taking into account for the given system")
-        parser.add_argument("--stations", type=int, default=2, help="Enter the total number of charging stations in the network")
+    parser = argparse.ArgumentParser(description="Add the number of vehicels and the number of charging stations")
+    parser.add_argument("--vehicles", type=int, default=6, help="Enter the total number of vehicles we are taking into account for the given system")
+    parser.add_argument("--stations", type=int, default=2, help="Enter the total number of charging stations in the network")
         
-        args = parser.parse_args()
-        n = args.vehicles
-        k = args.stations
+    args = parser.parse_args()
+    n = args.vehicles
+    k = args.stations
         
     
-        current_hour = datetime.now().hour
-        print("The current hour is", current_hour)
+    current_hour = datetime.now().hour
+    print("The current hour is", current_hour)
         
-        #Note: all the grid_prices are given in paise
-        
-        # price at the present hour
-        grid_price = cs_sell_price = random.randint(10, 18)
-        print("The present grid purchase price is", grid_price)
+    #Note: all the grid_prices are given in paise
+     
+    # price at the present hour
+    grid_price = cs_sell_price = random.randint(10, 18)
+    print("The present grid purchase price is", grid_price)
             
-        #Change in price is denoted by delta_lambda
-        #Let us assume that initially we sell at the same price as the grid
-        delta_lambda = 2
+    #Change in price is denoted by delta_lambda
+    #Let us assume that initially we sell at the same price as the grid
+    delta_lambda = 2
         
-        #lambda_max is the maximum price at which the user exits the charging station
-        lambda_max = np.ones((n,1))
+    #lambda_max is the maximum price at which the user exits the charging station
+    lambda_max = np.ones((n,1))
         
-        #lambda_b is the minimum price at which the user starts becoming sensitive to the price
-        lambda_b =  np.ones((n,1))
+    #lambda_b is the minimum price at which the user starts becoming sensitive to the price
+    lambda_b =  np.ones((n,1))
         
-        #lambda_sell is the selling price offered by the charging station
-        lambda_sell = np.ones((n,1))
+    #lambda_sell is the selling price offered by the charging station
+    lambda_sell = np.ones((n,1))
         
-        #lambda_purchase is the purchase price at whihc the charging station purchases electricity from the grid
-        lambda_purchase = np.ones((n,1))*grid_price
-        initial_soc = np.ones((n,1))
-        final_soc = np.ones((n,1))
-        Cn = np.ones((n,1))
-        E_n_t = np.ones((n,1))
+    #lambda_purchase is the purchase price at whihc the charging station purchases electricity from the grid
+    lambda_purchase = np.ones((n,1))*grid_price
+    initial_soc = np.ones((n,1))
+    final_soc = np.ones((n,1))
+    Cn = np.ones((n,1))
+    E_n_t = np.ones((n,1))
         
-        cs_sell_price_variation = [cs_sell_price*np.ones((n,1))]
-        demand_variation = []
-        omega_variation = []
-        profit_variation = []
-        profit_prev = 0 
+    cs_sell_price_variation = [cs_sell_price*np.ones((n,1))]
+    demand_variation = []
+    omega_variation = []
+    profit_variation = []
+    profit_prev = 0 
         
-        demand_final = np.zeros((n,1))
-        count = 0
-        state = 0
+    demand_final = np.zeros((n,1))
+    count = 0
+    state = 0
         
-        lambda_max = np.random.randint(25, 30, size = (n,1))
-        lambda_b = np.random.randint(10, 15, size= (n,1))
-        print(lambda_max)
-        print(lambda_b)
+    lambda_max = np.random.randint(25, 30, size = (n,1))
+    lambda_b = np.random.randint(10, 15, size= (n,1))
+    print(lambda_max)
+    print(lambda_b)
         
-        while True:
+    while True:
             
             #increase the price by 10 paise
             cs_sell_price+=delta_lambda
@@ -135,34 +135,36 @@ if __name__ == "__main__":
             
             profit_prev = profit
             
-        cs_sell_price_variation = np.array(cs_sell_price_variation)
-        demand_variation = np.array(demand_variation)
-        profit_variation = np.array(profit_variation)
-        omega_variation = np.array(omega_variation)
+    cs_sell_price_variation = np.array(cs_sell_price_variation)
+    demand_variation = np.array(demand_variation)
+    profit_variation = np.array(profit_variation)
+    omega_variation = np.array(omega_variation)
         
-        print(np.shape(profit_variation))
-        print(np.shape(omega_variation))
-        #print(cs_sell_price_variation, lambda_purchase)
-        cs_purchase_price_variation = np.repeat(lambda_purchase[np.newaxis,:,:], count+1, axis=0)
-        print(np.shape(cs_purchase_price_variation))
+    print(np.shape(profit_variation))
+    print(np.shape(omega_variation))
+    #print(cs_sell_price_variation, lambda_purchase)
+    cs_purchase_price_variation = np.repeat(lambda_purchase[np.newaxis,:,:], count+1, axis=0)
+    print(np.shape(cs_purchase_price_variation))
         
-        print(cs_sell_price/100)
-        print(lambda_sell)
-        print(count)
+    print(cs_sell_price/100)
+    nash = cs_sell_price
+    print(lambda_sell)
+    print(count)
         
-        data = [np.sum(demand_final*cs_sell_price)/n]
-        write_to_csv("average_amount.csv", data)
+    data = [np.sum(demand_final*cs_sell_price)/n]
+    write_to_csv("average_amount_1.csv", data)
         
-        data = [cs_sell_price, grid_price]
-        write_to_csv("sell_purchase_2.csv", data)
-        #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
-    
-        plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_variation, count)
-        plot_price_demand_n(cs_sell_price_variation, demand_variation, n)
-        combined_plot_price_n(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, n)
-        plot_price_omega_n(cs_sell_price_variation, omega_variation, n)
-        plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation, n)
-        plt.show()
+    data = [cs_sell_price, grid_price]
+    write_to_csv("sell_purchase_1.csv", data)
+    #plot_gridpurchase_sell_n(cs_sell_price_variation, cs_purchase_price_variation, n, count)
+    #plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_variation, nash)
+    combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, nash)
+    #plot_gridpurchase_sell_single(cs_sell_price_variation, cs_purchase_price_variation, count)
+    #plot_price_demand_n(cs_sell_price_variation, demand_variation, n)
+    combined_plot_price_n(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, n)
+    #plot_price_omega_n(cs_sell_price_variation, omega_variation, n)
+    #plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation, n)
+    plt.show()
     
     
     #plot_price_demand(cs_sell_price_variation, demand_variation)

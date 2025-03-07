@@ -96,7 +96,7 @@ def plot_nash_equilibrium(profit_variation, omega_variation, demand_variation):
     plt.grid()
     plt.legend()
     
-def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_variation):
+def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_variation, nash):
     """This function plots the profits versus the utility function to identify the nash equilibrium
     """
     plt.figure(5)
@@ -104,6 +104,7 @@ def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_var
     
     omega_plot = omega_variation[:,0,0]
     price_plot = cs_sell_price_variation[1:,0,0]
+    plt.axvline(x=nash, color='m', linestyle='dotted', linewidth=2, label='Nash Equilibrium')
     
     plt.plot(price_plot, profit_variation, label = "Profit to the charging station", color = 'b')
     plt.plot(price_plot, omega_plot, label = "Utility of EV", color = 'r', linestyle = '--')
@@ -116,7 +117,7 @@ def plot_nash_equilibrium_2(profit_variation, omega_variation, cs_sell_price_var
     
     
 
-def combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation):
+def combined_plot_price(profit_variation, omega_variation, cs_sell_price_variation, demand_variation, nash):
     fig, ax1 = plt.subplots()
 
     # Extract relevant data
@@ -127,16 +128,23 @@ def combined_plot_price(profit_variation, omega_variation, cs_sell_price_variati
     # Primary y-axis (Profit & Utility)
     ax1.plot(price_plot, profit_variation, label="Profit to the Charging Station", color='b')
     ax1.plot(price_plot, omega_plot, label="Utility of EV", color='r', linestyle='--')
+    ax1.axvline(x=nash, color='m', linestyle='dotted', linewidth=2, label='Nash Equilibrium')
     
     ax1.set_xlabel("Selling Price of Electricity to EVs")
-    ax1.set_ylabel("Profit / Utility", color='b')
-    ax1.tick_params(axis='y', labelcolor='b')
+    ax1.set_ylabel("")
+    ax1.text(-0.1, 0.45, "Profit ($\cent$)", color="blue", fontsize=12, transform=ax1.transAxes, 
+         va='center', ha='center', rotation=90)
+    ax1.text(-0.13, 0.45, "Utility ($\cent$)", color="red", fontsize=12, transform=ax1.transAxes, 
+         va='center', ha='center', rotation=90)
+
+
+    ax1.tick_params(axis='y')
     
     # Secondary y-axis (Demand)
     ax2 = ax1.twinx()
-    ax2.plot(price_plot, demand_plot, label="Demand of Charging Station", linestyle='-.', color='g')
+    ax2.plot(price_plot, demand_plot, label="Demand of EV", linestyle='-.', color='g')
     
-    ax2.set_ylabel("Demand", color='g')
+    ax2.set_ylabel("Demand (kWh)", color='g')
     ax2.tick_params(axis='y', labelcolor='g')
 
     # Title, legend, and grid
@@ -167,14 +175,18 @@ def combined_plot_price_n(profit_variation, omega_variation, cs_sell_price_varia
         axes[i].plot(price_plot, profit_variation, label="Profit to the Charging Station", color='b')
         axes[i].plot(price_plot, omega_plot[:, i], label="Utility of EV", color='r', linestyle='--')
         axes[i].set_xlabel("Selling Price of Electricity to EVs")
-        axes[i].set_ylabel("Profit / Utility", color='b')
-        axes[i].tick_params(axis='y', labelcolor='b')
+        axes[i].set_ylabel("")
+        axes[i].text(-0.1, 0.45, "Profit ($\cent$)", color="blue", fontsize=12, transform=axes[i].transAxes, 
+         va='center', ha='center', rotation=90)
+        axes[i].text(-0.13, 0.45, "Utility ($\cent$)", color="red", fontsize=12, transform=axes[i].transAxes, 
+         va='center', ha='center', rotation=90)
+        axes[i].tick_params(axis='y',)
         axes[i].grid(True)
 
         # Create a secondary y-axis for demand
         ax2 = axes[i].twinx()
-        ax2.plot(price_plot, demand_plot[:, i], label="Demand of Charging Station", linestyle='-.', color='g')
-        ax2.set_ylabel("Demand", color='g')
+        ax2.plot(price_plot, demand_plot[:, i], label="Demand of EV", linestyle='-.', color='g')
+        ax2.set_ylabel("Demand (kWh)", color='g')
         ax2.tick_params(axis='y', labelcolor='g')
 
         # Combine legends from both axes
