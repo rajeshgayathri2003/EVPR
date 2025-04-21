@@ -257,6 +257,40 @@ def plot_price_omega_n(cs_sell_price_variation, omega_variation, n):
     plt.tight_layout()
     
     plt.legend()
+    
+def plot_omega_energy(omega_variation, demand_variation):
+    
+    plt.figure()
+    omega_plot = omega_variation[:,0,0]
+    demand_plot = demand_variation[:,0,0]
+    print(demand_plot)
+    
+    plt.plot(demand_plot, omega_plot, color = 'r')
+    
+    plt.ylabel('Utility to EV User')
+    plt.xlabel('Demand of EV')
+    plt.title('Variation of EV user utility with demand', fontsize = 10)
+    plt.grid()
+    
+    plt.legend()
+    plt.show()
+    
+def plot_energy_sensitivity(demand_variation, sensitivity_variation):
+    
+    demand_plot = demand_variation[:,0,0]
+    sensitvivty_plot = sensitivity_variation[:,0,0]
+    print(demand_plot)
+    
+    plt.plot(sensitvivty_plot, demand_plot, color = 'r')
+    
+    plt.xlabel('Sensitivity')
+    plt.ylabel('Demand of EV')
+    plt.title('Variation of EV user utility with demand', fontsize = 10)
+    plt.grid()
+    
+    plt.legend()
+    plt.show()
+    
 
 def plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation, n):
     """This function plots the profits versus the utility function to identify the nash equilibrium
@@ -266,7 +300,7 @@ def plot_nash_equilibrium_n(profit_variation, omega_variation, demand_variation,
     
     
     fig, axes = plt.subplots(3, 2, figsize=(6, 2 * n))
-    fig.suptitle('Variation of Demand of Different Vehicles with selling Price', fontsize=16)
+    fig.suptitle('Variation of Profit to EV and Utility to user as the demand changes', fontsize=16)
     # sell_price_plot = cs_sell_price_variation[1:,0,0]
     omega_plot = omega_variation[:,:,0]
     count = 0

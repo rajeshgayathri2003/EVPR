@@ -4,22 +4,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+# def write_to_csv(file_path, data):
+#     curr = os.getcwd()
+#     file_path = os.path.join(curr, file_path)
+#     if os.path.exists(file_path):
+#         with open(file_path, 'a') as f:
+#             writer_object = csv.writer(f)
+#             writer_object.writerow(data)
+            
+#             f.close()
+            
+#     else:
+#         with open(file_path, 'w') as f:
+#             writer_object = csv.writer(f)
+#             writer_object.writerow(data)
+            
+#             f.close()
+
 def write_to_csv(file_path, data):
     curr = os.getcwd()
     file_path = os.path.join(curr, file_path)
-    if os.path.exists(file_path):
-        with open(file_path, 'a') as f:
-            writer_object = csv.writer(f)
-            writer_object.writerow(data)
+    with open(file_path, 'w') as f:
+        writer_object = csv.writer(f)
+        writer_object.writerow(data)
             
-            f.close()
-            
-    else:
-        with open(file_path, 'w') as f:
-            writer_object = csv.writer(f)
-            writer_object.writerow(data)
-            
-            f.close()
+        f.close()
             
 def read_from_csv(file_path):
     curr = os.getcwd()

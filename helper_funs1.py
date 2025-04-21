@@ -23,7 +23,8 @@ def profit_of_kth_station_at_time_t(lambda_sell, lambda_purchase, energy):
     Returns:
         float: The profit earned by the kth charging station
     """
-    profit = np.sum(lambda_sell*energy - lambda_purchase*energy)
+    profit = lambda_sell*energy - lambda_purchase*energy
+    profit = np.sum(profit)
     
     return profit
 
