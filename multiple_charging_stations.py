@@ -23,10 +23,9 @@ def assign_vehicle_details(Cn, cs_sell_price, lambda_sell, initial_soc, final_so
             csv_file = csv_file[20:40]
             
         elif station == 2:
-            csv_file = csv_file[40:]
+            csv_file = csv_file[40:60]
         
         for i, lines in enumerate(csv_file):
-    
                 
             Cn[i,station] = lines[1]
                 
@@ -62,65 +61,111 @@ def find_nash_equilibrium(grid_price,
         print("The present station is {}".format(station))
         
         while True:
+            
             cs_sell_price+=delta_lambda
             
-            lambda_sell[:,station] = cs_sell_price
+            lambda_sell[:,:] = cs_sell_price
             
             print("The present selling price is {}".format(cs_sell_price))    
             
             lambda_sell_append = copy.deepcopy(lambda_sell)
-            
             cs_sell_price_variation.append(lambda_sell_append)
                 
-            S_b = calculate_base_sensitivity(lambda_max[:, station:station+1], lambda_b[:, station:station+1], Cn[:, station:station+1])
-            # print(np.shape(S_b))
-                
-            alpha = calculate_alpha(lambda_sell[:, station:station+1], lambda_b[:, station:station+1], lambda_max[:, station:station+1])
-            # print(np.shape(alpha))
+            S_b = calculate_base_sensitivity(lambda_max, lambda_b, Cn)
+            print(np.shape(S_b))    
+            
+            alpha = calculate_alpha(lambda_sell, lambda_b, lambda_max)
+            print(np.shape(alpha))
             
             B_n_t = calculate_behavioural_response(alpha, type_="medium")
-            # print(np.shape(B_n_t))
+            #print(B_n_t)
             
-            B_n_t_dash  = B_n_t
+            S_n_t = np.divide(S_b,(final_soc-initial_soc)*B_n_t)
+                    
+            E_n_t[B_n_t == 0] = 0
+            E_n_t[B_n_t != 1] = calculate_energy_n(lambda_max[B_n_t != 1], lambda_sell[B_n_t != 1], S_n_t[B_n_t != 1])
+            E_n_t[B_n_t == 1] = energy_requirement_of_customers(final_soc[B_n_t == 1], initial_soc[B_n_t == 1], Cn[B_n_t == 1])
             
-            # print("shapes")
-            # print(np.shape(S_b), np.shape(final_soc[:, station:station+1]), np.shape(B_n_t))
+            print("The energy demand for the vehicles is", E_n_t)
             
-            S_n_t = np.divide(S_b,(final_soc[:, station:station+1]-initial_soc[:, station:station+1])*B_n_t)
-            #print(np.shape(S_n_t))
-            
-            E_n_t[:, station:station+1][B_n_t_dash == 0] = 0
-            E_n_t[:, station:station+1][B_n_t_dash != 1] = calculate_energy_n(lambda_max[:, station:station+1][B_n_t_dash != 1], lambda_sell[:, station:station+1][B_n_t_dash != 1], S_n_t[B_n_t_dash != 1])
-            E_n_t[:, station:station+1][B_n_t_dash == 1] = energy_requirement_of_customers(final_soc[:, station:station+1][B_n_t_dash == 1], initial_soc[:, station:station+1][B_n_t_dash == 1], Cn[:, station:station+1][B_n_t_dash == 1])
-            
-            #print("The energy demand for the vehicles is", E_n_t[:, station:station+1])
-            
-            omega = calculate_utility(S_n_t, E_n_t[:, station:station+1], lambda_max[:, station:station+1], lambda_sell[:, station:station+1])
-            # print(np.shape(omega))
+            omega = calculate_utility(S_n_t, E_n_t, lambda_max, lambda_sell)
             omega_append = copy.deepcopy(omega)
             omega_variation.append(omega_append)
             
-            E_n_t_append = copy.deepcopy(E_n_t[:, station:station+1])
+            E_n_t_append = copy.deepcopy(E_n_t)
             demand_variation.append(E_n_t_append)
             
-            sensitivity_variation.append(copy.deepcopy(S_n_t[:, station:station+1]))
+            sensitivity_variation.append(copy.deepcopy(S_n_t))
             
-            
-            profit = profit_of_kth_station_at_time_t(lambda_sell[:, station:station+1], lambda_purchase[:, station:station+1], E_n_t[:, station:station+1])
+            profit = profit_of_kth_station_at_time_t(lambda_sell, lambda_purchase, E_n_t)
             profit_append = copy.deepcopy(profit)
             profit_variation.append(profit_append)
         
             print("The profit is", profit/100)
             
-            #print("the profits are", profit)
+            print("the profits are", profit)
             
             if profit<prev_profit:
                 print("Nash Equilibrium price for station {} is {}".format(station, cs_sell_price-delta_lambda))
                 nash = cs_sell_price-delta_lambda
                 print(E_n_t_append)
                 break
-                
+            
             prev_profit = profit
+            
+            # lambda_sell_append = copy.deepcopy(lambda_sell)
+            
+            # cs_sell_price_variation.append(lambda_sell_append)
+                
+            # S_b = calculate_base_sensitivity(lambda_max[:, station:station+1], lambda_b[:, station:station+1], Cn[:, station:station+1])
+            # # print(np.shape(S_b))
+                
+            # alpha = calculate_alpha(lambda_sell[:, station:station+1], lambda_b[:, station:station+1], lambda_max[:, station:station+1])
+            # # print(np.shape(alpha))
+            
+            # B_n_t = calculate_behavioural_response(alpha, type_="medium")
+            # # print(np.shape(B_n_t))
+            
+            # B_n_t_dash  = B_n_t
+            
+            # # print("shapes")
+            # # print(np.shape(S_b), np.shape(final_soc[:, station:station+1]), np.shape(B_n_t))
+            
+            # S_n_t = np.divide(S_b,(final_soc[:, station:station+1]-initial_soc[:, station:station+1])*B_n_t)
+            # #print(np.shape(S_n_t))
+            
+            # E_n_t[:, station:station+1][B_n_t_dash == 0] = 0
+            # E_n_t[:, station:station+1][B_n_t_dash != 1] = calculate_energy_n(lambda_max[:, station:station+1][B_n_t_dash != 1], lambda_sell[:, station:station+1][B_n_t_dash != 1], S_n_t[B_n_t_dash != 1])
+            # E_n_t[:, station:station+1][B_n_t_dash == 1] = energy_requirement_of_customers(final_soc[:, station:station+1][B_n_t_dash == 1], initial_soc[:, station:station+1][B_n_t_dash == 1], Cn[:, station:station+1][B_n_t_dash == 1])
+            
+            # #print("The energy demand for the vehicles is", E_n_t[:, station:station+1])
+            
+            # omega = calculate_utility(S_n_t, E_n_t[:, station:station+1], lambda_max[:, station:station+1], lambda_sell[:, station:station+1])
+            # # print(np.shape(omega))
+            # omega_append = copy.deepcopy(omega)
+            # omega_variation.append(omega_append)
+            
+            # E_n_t_append = copy.deepcopy(E_n_t[:, station:station+1])
+            # demand_variation.append(E_n_t_append)
+            
+            # sensitivity_variation.append(copy.deepcopy(S_n_t[:, station:station+1]))
+            
+            
+            # profit = profit_of_kth_station_at_time_t(lambda_sell[:, station:station+1], lambda_purchase[:, station:station+1], E_n_t[:, station:station+1])
+            # profit_append = copy.deepcopy(profit)
+            # profit_variation.append(profit_append)
+        
+            # print("The profit is", profit/100)
+            
+            # #print("the profits are", profit)
+            
+            # if profit<prev_profit:
+            #     print("Nash Equilibrium price for station {} is {}".format(station, cs_sell_price-delta_lambda))
+            #     nash = cs_sell_price-delta_lambda
+            #     print(E_n_t_append)
+            #     break
+                
+            # prev_profit = profit
             
         cs_sell_price_variation = np.array(cs_sell_price_variation)
         demand_variation = np.array(demand_variation)
@@ -202,7 +247,7 @@ if __name__ == "__main__":
     #lambda_sell is the selling price offered by the charging station
     lambda_sell = np.ones((n,k))
         
-    #lambda_purchase is the purchase price at whihc the charging station purchases electricity from the grid
+    #lambda_purchase is the purchase price at which the charging station purchases electricity from the grid
     lambda_purchase = np.ones((n,k))*grid_price
     initial_soc = np.ones((n,k))
     final_soc = np.ones((n,k))

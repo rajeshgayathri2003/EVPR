@@ -44,30 +44,30 @@ def read_from_csv(file_path):
 def plot_time_selling_purchse_price(data):
     plt.figure(1)
     
-    time = np.linspace(0, 23, 24)
-    sell = [float(i[0]) for i in data ]
-    purchase = [float(i[1]) for i in data ]
+    time = np.linspace(0, 24, 25)
+    sell = [float(i[1]) for i in data ]
+    purchase = [float(i[0]) for i in data ]
 
-    plt.step(time, sell, label="Selling Price", where="mid", color="steelblue", linewidth=2)
-    plt.step(time, purchase, label="Electricity Cost", where="mid", color="orange", linewidth=2)
+    plt.step(time, sell, label="Selling Price", color="steelblue", linewidth=2)
+    plt.step(time, purchase, label="Electricity Cost", color="orange", linewidth=2)
 
     plt.xlabel('Hours')
-    plt.ylabel('cents/kWh')
+    plt.ylabel('₹/kWh')
     plt.title("Hourly cost of purchasing electricity from the grid and selling price")
 
     # ax = plt.gca()
     # ax.yaxis.set_major_locator(ticker.MultipleLocator(1))  # Ensure consistent tick intervals
-
+    
     plt.legend()
     plt.grid()
     
 def plot_time_average_hourly_cost_per_charging_session(data):
     plt.figure(2)
     time = np.linspace(0, 23, 24)
-    price = [float(i[0])/100 for i in data]
+    price = [float(i[0]) for i in data]
     plt.step(time, price, label = "Price of electricity sold to EV", color = 'b')
     plt.xlabel('Hours')
-    plt.ylabel('Dollar')
+    plt.ylabel('Average Cost (₹)')
     plt.title("Average cost per charging session")
     
     plt.legend()
@@ -75,10 +75,10 @@ def plot_time_average_hourly_cost_per_charging_session(data):
     
         
 if __name__ == "__main__":
-    prices = read_from_csv("sell_purchase_1.csv")
+    prices = read_from_csv("twenty_four.csv")
     plot_time_selling_purchse_price(prices)
     
-    cost_charging_session = read_from_csv("average_amount_1.csv")
+    cost_charging_session = read_from_csv("average_price_twenty_four.csv")
     plot_time_average_hourly_cost_per_charging_session(cost_charging_session)
     
     plt.show()
